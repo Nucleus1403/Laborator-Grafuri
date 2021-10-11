@@ -8,7 +8,8 @@ public class UndirectedGraphs
     public static UndirectedGraphs Instance = null;
     public Matrix MatrixGrid;
     public int[] ValidateList;
-    private Scanner sc = new Scanner(new File("C:\\Users\\denis\\IdeaProjects\\Laborator-Grafuri\\src\\Input"));
+    public int[] Coada;
+    private Scanner sc = new Scanner(new File("C:\\Users\\claud\\IdeaProjects\\Laborator-Grafuri\\src\\Input"));
 
     public UndirectedGraphs() throws FileNotFoundException {
 
@@ -30,6 +31,7 @@ public class UndirectedGraphs
         Size = sc.nextInt();
         MatrixGrid = new Matrix(Size+1);
         ValidateList = new int[Size+1];
+        Coada = new int[Size+1];
     }
 
     public void ReadEdges()
@@ -85,39 +87,154 @@ public class UndirectedGraphs
     }
     public void StartDepthFirstSearch(int value)
     {
-        DepthFirstSearch(value);
+        for (int i = 0; i < Size; i++) {
+            ValidateList[i]=0;
+        }
+        DepthFirstSearch(value,1,true);
+        System.out.print("\n");
     }
 
-    public void DepthFirstSearch(int value)
+    public void StartBreadthFirstSearch(int value)
     {
-        ValidateList[value]=1;
-        System.out.print((value+1)+" ");
+        for (int i = 0; i < Size; i++) {
+            ValidateList[i]=0;
+            Coada[i]=0;
+        }
+        BreadthFirstSearch(value);
+    }
+
+    public boolean CheckConex(int value,boolean showAnswer,boolean show)
+    {
+        for (int i = 0; i < Size; i++) {
+            ValidateList[i]=0;
+        }
+        DepthFirstSearch(value,1,show);
+        for (int i = 0; i < Size; i++) {
+            if(ValidateList[i]==0)
+            {
+                if(showAnswer)
+                    System.out.println("Not Conex");
+                return false;
+            }
+        }
+        if(showAnswer)
+            System.out.println("Conex");
+
+        return true;
+    }
+
+    public void ShowAllGraphs()
+    {
+        int count =1;
+        if(CheckConex(0,false,true))
+            return;
+
+        for (int i = 0; i < Size; i++) {
+            if(ValidateList[i]==0)
+            {
+                count++;
+                System.out.print("\n");
+                DepthFirstSearch(i,i+1,true);
+            }
+        }
+        System.out.print("\n");
+        System.out.print("Number of conex graphs : "+count);
+    }
+
+    public void GenerateConex()
+    {
+        if(CheckConex(0,false,false))
+            return;
+
+        for (int i = 0; i < Size; i++) {
+            if(ValidateList[i]==0)
+            {
+
+                MatrixGrid.Grid[0][i]=1;
+                MatrixGrid.Grid[i][0]=1;
+                DepthFirstSearch(i,1,false);
+
+            }
+        }
+        System.out.print("\n");
+        System.out.println("Made Conex :");
+        ShowMatrix();
+        System.out.print("\n");
+
+    }
+
+    public void GenerateNonConex()
+    {
+        int target =0;
+        for (int i = 0; i < Size; i++) {
+            if(GetNodeCount(i+1,false)==1) {
+                target = i;
+                break;
+            }
+        }
+        for (int i = 0; i < Size; i++) {
+            if(MatrixGrid.Grid[target][i]==1)
+            {
+                MatrixGrid.Grid[target][i] = 0;
+                MatrixGrid.Grid[i][target] = 0;
+            }
+        }
+        System.out.print("\n");
+        System.out.println("Made Non-Conex :");
+        ShowMatrix();
+        System.out.print("\n");
+        ShowAllGraphs();
+    }
+
+
+    public int GetNodeCount(int value,boolean show)
+    {
+        value-=1;
+        int count =0;
+        for (int i = 0; i < Size; i++) {
+            if(MatrixGrid.Grid[value][i]==1)
+                count++;
+        }
+
+        if(show)
+            System.out.println("Count for node "+(value+1)+" is "+count);
+        return count;
+    }
+
+
+    public void DepthFirstSearch(int value,int key,boolean show)
+    {
+        ValidateList[value]=key;
+        if(show)
+            System.out.print((value+1)+" ");
 
         for(int i=1;i<=Size;i++)
             if(MatrixGrid.Grid[value][i]==1 && ValidateList[i]==0)
             {
-                DepthFirstSearch(i);
+                DepthFirstSearch(i,key,show);
             }
     }
 
-    int bfs(int start)
+    private int BreadthFirstSearch(int start)
     {
-        int i,k,st,dr;
-        st=dr=1;
-        x[1]=start;
-        v[start]=1;//vizitez varful initial
-        while(st<=dr)//cat timp coada nu este vida
+        int k,Left,Right;
+        Left=Right=1;
+
+        Coada[1]=start;
+        ValidateList[start]=1;
+        
+        while(Left<=Right)
         {
-            k=x[st];//preiau un element din coada
-            for(i=1;i<=n;i++)//parcurg varfurile
-                if(v[i]==0 && a[k][i]==1)//daca i este vecin cu k si nu este vizitat
+            k=Coada[Left];//preiau un element din coada
+            for(int i=1;i<=Size;i++)//parcurg varfurile
+                if(ValidateList[i]==0 && MatrixGrid.Grid[k][i]==1)
                 {
-                    v[i]=1;//il vizitez
-                    x[++dr]=i;//il adaug in coada
+                    ValidateList[i]=1;
+                    Coada[++Right]=i;
                 }
-            st++;//sterg din coada
+            Left++;
         }
-        return dr;//returnam numarul de varfuri vizitate
+        return Right;//returnam numarul de varfuri vizitate
     }
 
 }
