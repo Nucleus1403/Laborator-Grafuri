@@ -1,3 +1,5 @@
+package Matrix;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -7,9 +9,10 @@ public class UndirectedGraphs
     public int Size;
     public static UndirectedGraphs Instance = null;
     public Matrix MatrixGrid;
+    public Matrix AuxMatrixGrid;
     public int[] ValidateList;
     public int[] Coada;
-    private Scanner sc = new Scanner(new File("C:\\Users\\claud\\IdeaProjects\\Laborator-Grafuri\\src\\Input"));
+    private Scanner sc = new Scanner(new File("C:\\Users\\claud\\IdeaProjects\\Laborator-Grafuri\\src\\Matrix\\Input"));
 
     public UndirectedGraphs() throws FileNotFoundException {
 
@@ -56,6 +59,7 @@ public class UndirectedGraphs
                 System.out.print(MatrixGrid.Grid[i][j] +" ");
             }
             System.out.print("\n");
+
         }
     }
     public void ShowGrids()
@@ -165,18 +169,21 @@ public class UndirectedGraphs
 
     public void GenerateNonConex()
     {
+
         int target =0;
+        int targetF=0;
+
         for (int i = 0; i < Size; i++) {
             if(GetNodeCount(i+1,false)==1) {
-                target = i;
+                targetF = i;
                 break;
             }
         }
-        for (int i = 0; i < Size; i++) {
-            if(MatrixGrid.Grid[target][i]==1)
+        for (int i = 0; i < Size; i++)
+        {
+            if(MatrixGrid.Grid[targetF][i]==1)
             {
-                MatrixGrid.Grid[target][i] = 0;
-                MatrixGrid.Grid[i][target] = 0;
+                //TODO Destroy i=target;
             }
         }
         System.out.print("\n");
