@@ -33,8 +33,10 @@ public class UndirectedGraphs
     {
         Size = sc.nextInt();
         MatrixGrid = new Matrix(Size+1);
+        AuxMatrixGrid = new Matrix(Size+1);
         ValidateList = new int[Size+1];
         Coada = new int[Size+1];
+
     }
 
     public void ReadEdges()
@@ -94,7 +96,7 @@ public class UndirectedGraphs
         for (int i = 0; i < Size; i++) {
             ValidateList[i]=0;
         }
-        DepthFirstSearch(value,1,true);
+        DepthFirstSearch(value,1,true,MatrixGrid);
         System.out.print("\n");
     }
 
@@ -107,12 +109,12 @@ public class UndirectedGraphs
         BreadthFirstSearch(value);
     }
 
-    public boolean CheckConex(int value,boolean showAnswer,boolean show)
+    public boolean CheckConex(int value,boolean showAnswer,boolean show,Matrix currentMatrix)
     {
         for (int i = 0; i < Size; i++) {
             ValidateList[i]=0;
         }
-        DepthFirstSearch(value,1,show);
+        DepthFirstSearch(value,1,show,currentMatrix);
         for (int i = 0; i < Size; i++) {
             if(ValidateList[i]==0)
             {
@@ -130,7 +132,7 @@ public class UndirectedGraphs
     public void ShowAllGraphs()
     {
         int count =1;
-        if(CheckConex(0,false,true))
+        if(CheckConex(0,false,true,MatrixGrid))
             return;
 
         for (int i = 0; i < Size; i++) {
@@ -138,7 +140,7 @@ public class UndirectedGraphs
             {
                 count++;
                 System.out.print("\n");
-                DepthFirstSearch(i,i+1,true);
+                DepthFirstSearch(i,i+1,true,MatrixGrid);
             }
         }
         System.out.print("\n");
@@ -147,7 +149,7 @@ public class UndirectedGraphs
 
     public void GenerateConex()
     {
-        if(CheckConex(0,false,false))
+        if(CheckConex(0,false,false,MatrixGrid))
             return;
 
         for (int i = 0; i < Size; i++) {
@@ -156,7 +158,7 @@ public class UndirectedGraphs
 
                 MatrixGrid.Grid[0][i]=1;
                 MatrixGrid.Grid[i][0]=1;
-                DepthFirstSearch(i,1,false);
+                DepthFirstSearch(i,1,false,MatrixGrid);
 
             }
         }
@@ -169,28 +171,37 @@ public class UndirectedGraphs
 
     public void GenerateNonConex()
     {
-
-        int target =0;
-        int targetF=0;
-
+        GenerateFakeMatrix();
         for (int i = 0; i < Size; i++) {
-            if(GetNodeCount(i+1,false)==1) {
-                targetF = i;
-                break;
-            }
-        }
-        for (int i = 0; i < Size; i++)
-        {
-            if(MatrixGrid.Grid[targetF][i]==1)
+            DeleteNodeConnection(i);
+            if(!CheckConex(0,false,false,AuxMatrixGrid))
             {
-                //TODO Destroy i=target;
+                System.out.println("If you delete the Node : "+ (i+1)+" you generate nonconex Graph");
+                return;
             }
+            GenerateFakeMatrix();
         }
-        System.out.print("\n");
-        System.out.println("Made Non-Conex :");
-        ShowMatrix();
-        System.out.print("\n");
-        ShowAllGraphs();
+    }
+
+
+    private void DeleteNodeConnection(int node)
+    {
+        for (int i = 0; i < Size; i++) {
+
+            AuxMatrixGrid.Grid[i][node]=0;
+            AuxMatrixGrid.Grid[node][i]=0;
+        }
+    }
+
+    private void GenerateFakeMatrix()
+    {
+        for (int i = 0; i < Size; i++) {
+            for (int j = 0; j < Size; j++) {
+
+                AuxMatrixGrid.Grid[i][j]=MatrixGrid.Grid[i][j];
+            }
+
+        }
     }
 
 
@@ -209,16 +220,16 @@ public class UndirectedGraphs
     }
 
 
-    public void DepthFirstSearch(int value,int key,boolean show)
+    public void DepthFirstSearch(int value,int key,boolean show,Matrix currentMatrix)
     {
         ValidateList[value]=key;
         if(show)
             System.out.print((value+1)+" ");
 
         for(int i=1;i<=Size;i++)
-            if(MatrixGrid.Grid[value][i]==1 && ValidateList[i]==0)
+            if(currentMatrix.Grid[value][i]==1 && ValidateList[i]==0)
             {
-                DepthFirstSearch(i,key,show);
+                DepthFirstSearch(i,key,show,currentMatrix);
             }
     }
 
@@ -232,8 +243,8 @@ public class UndirectedGraphs
         
         while(Left<=Right)
         {
-            k=Coada[Left];//preiau un element din coada
-            for(int i=1;i<=Size;i++)//parcurg varfurile
+            k=Coada[Left];
+            for(int i=1;i<=Size;i++)
                 if(ValidateList[i]==0 && MatrixGrid.Grid[k][i]==1)
                 {
                     ValidateList[i]=1;
@@ -241,7 +252,7 @@ public class UndirectedGraphs
                 }
             Left++;
         }
-        return Right;//returnam numarul de varfuri vizitate
+        return Right;
     }
 
 }

@@ -11,9 +11,9 @@ public class Main {
         graphs.ShowGrids();
         graphs.StartDepthFirstSearch(0);
         graphs.GetNodeCount(2,true);
-        graphs.CheckConex(0,true,false);
-        graphs.ShowAllGraphs();
-        graphs.GenerateConex();
-        //graphs.GenerateNonConex();
+        graphs.CheckConex(0,true,false, graphs.MatrixGrid);
+        //graphs.ShowAllGraphs();
+        //graphs.GenerateConex();
+        graphs.GenerateNonConex();
     }
 }
