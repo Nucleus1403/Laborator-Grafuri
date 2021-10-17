@@ -10,7 +10,7 @@ public class Main {
         System.out.print("\n");
         System.out.println(tree.ContainsNode(9));
 
-        tree.Delete(9);
+        //tree.Delete(9);
         tree.TraverseInOrder(tree.TreeRoot);
 
         System.out.print("\n");
@@ -21,6 +21,11 @@ public class Main {
         System.out.print("\n");
         tree.TraversePostOrder(tree.TreeRoot);
 
+        System.out.print("\nQueue\n");
+        tree.StartTraversePreOrderWithQueue(tree.TreeRoot);
+
+        System.out.print("\nStack\n");
+        tree.PreorderWithStack(tree.TreeRoot);
     }
     private static BinaryTree CreateBinaryTree() {
         BinaryTree bt = new BinaryTree();

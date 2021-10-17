@@ -1,5 +1,11 @@
 package BinaryTree;
 
+import groovyjarjarpicocli.CommandLine;
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 public class BinaryTree
 {
     public Node TreeRoot;
@@ -111,6 +117,49 @@ public class BinaryTree
             System.out.print(" " + node.key);
             TraversePreOrder(node.Left);
             TraversePreOrder(node.Right);
+        }
+    }
+
+    private Queue<Integer> queue = new LinkedList<>();
+
+    public void StartTraversePreOrderWithQueue(Node node)
+    {
+        queue.add(node.key);
+        TraversePreOrderWithQueue(node);
+    }
+    public void TraversePreOrderWithQueue(Node node) {
+        if (node != null)
+        {
+            if (node.Left != null) {
+                queue.add(node.Left.key);
+            }
+            if (node.Right != null) {
+                queue.add(node.Right.key);
+            }
+            System.out.print(" " + queue.peek());
+            queue.remove();
+            TraversePreOrder(node.Left);
+            TraversePreOrder(node.Right);
+        }
+    }
+
+    private Stack<Node> stack = new Stack();
+
+    public void PreorderWithStack(Node node) {
+        if (node == null)
+            return;
+
+        while (node != null || stack.size() > 0) {
+
+            while (node != null) {
+
+                stack.push(node);
+                node = node.Left;
+            }
+            node = stack.pop();
+
+            System.out.print(node.key + " ");
+            node = node.Right;
         }
     }
 
